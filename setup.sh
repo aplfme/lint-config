@@ -3,6 +3,7 @@
 #   bash setup.sh
 # Produces three commits: setup, one-time autofix, ratchet (remaining errors downgraded to warn).
 set -euo pipefail
+export NO_COLOR=1
 
 BIOME_VERSION="2.5.15"
 CONFIG_REF="github:aplfme/lint-config#v1"
@@ -65,6 +66,7 @@ fi
 npx biome lint --reporter=json --max-diagnostics=none . 2>/dev/null > /tmp/biome-$$.json || true
 node "$HERE/ratchet.mjs" /tmp/biome-$$.json biome.json
 rm -f /tmp/biome-$$.json
+npx biome format --write biome.json >/dev/null 2>&1 || true
 
 npx biome ci . >/dev/null 2>&1 || { echo "biome ci still failing after ratchet:" >&2; npx biome ci . 2>&1 | tail -40 >&2; exit 2; }
 
