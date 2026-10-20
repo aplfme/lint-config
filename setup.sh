@@ -12,7 +12,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 [ -f package.json ] || { echo "no package.json" >&2; exit 1; }
 
-if [ -f pnpm-lock.yaml ]; then PM=pnpm; ADD="pnpm add -D -E"; RM="pnpm remove"
+if [ -f pnpm-lock.yaml ]; then PM=pnpm; ADD="pnpm add -D -E --ignore-scripts"; RM="pnpm remove"
   [ -f pnpm-workspace.yaml ] && { ADD="$ADD -w"; RM="$RM -w"; }
 elif [ -f yarn.lock ]; then PM=yarn; ADD="yarn add -D -E"; RM="yarn remove"
 else PM=npm; ADD="npm install -D -E"; RM="npm uninstall"
