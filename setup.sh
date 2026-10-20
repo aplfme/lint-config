@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Adds the shared Biome setup to a repo. Run from the repo root on a clean branch.
 #   bash setup.sh
+# Optional: COMMIT_TRAILER is appended to each commit message.
 # Produces three commits: setup, one-time autofix, ratchet (remaining errors downgraded to warn).
 set -euo pipefail
 export NO_COLOR=1
@@ -50,7 +51,9 @@ git add -A
 git commit -q --no-verify -m "chore: add Biome linter and formatter
 
 Replaces ESLint/Prettier with the shared config from aplfme/lint-config.
-Adds a lefthook pre-commit hook and a Lint CI workflow."
+Adds a lefthook pre-commit hook and a Lint CI workflow.${COMMIT_TRAILER:+
+
+$COMMIT_TRAILER}"
 
 # 2. One-time autofix (safe fixes + format + import sorting)
 ./node_modules/.bin/biome check --write --max-diagnostics=0 . >/dev/null 2>&1 || true
@@ -58,7 +61,9 @@ if ! git diff --quiet; then
   git add -A
   git commit -q --no-verify -m "chore: apply Biome autofix and formatting
 
-Mechanical change only. Listed in .git-blame-ignore-revs."
+Mechanical change only. Listed in .git-blame-ignore-revs.${COMMIT_TRAILER:+
+
+$COMMIT_TRAILER}"
   echo "$(git rev-parse HEAD) # Biome autofix and formatting" >> .git-blame-ignore-revs
 fi
 
@@ -74,5 +79,7 @@ git add -A
 git commit -q --no-verify -m "chore: set existing Biome violations to warn
 
 Each rule listed in biome.json still has violations in this repo.
-Fix them, then remove the override so the rule goes back to error." || true
+Fix them, then remove the override so the rule goes back to error.${COMMIT_TRAILER:+
+
+$COMMIT_TRAILER}" || true
 echo "done ($PM)"
