@@ -1,0 +1,10 @@
+name: Lint
+
+on:
+  pull_request:
+  push:
+    branches: [__DEFAULT_BRANCH__]
+
+jobs:
+  lint:
+    uses: aplfme/lint-config/.github/workflows/lint.yml@v1

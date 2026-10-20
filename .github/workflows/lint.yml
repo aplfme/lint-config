@@ -1,0 +1,25 @@
+name: Lint
+
+on:
+  workflow_call:
+
+jobs:
+  biome:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            npm i -g pnpm && pnpm install --frozen-lockfile --ignore-scripts
+          elif [ -f yarn.lock ]; then
+            corepack enable && yarn install --frozen-lockfile --ignore-scripts
+          else
+            npm ci --ignore-scripts
+          fi
+      - name: Biome
+        run: npx biome ci --reporter=github .

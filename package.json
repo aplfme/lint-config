@@ -1,0 +1,10 @@
+{
+  "name": "@aplfme/lint-config",
+  "version": "1.0.0",
+  "description": "Shared Biome config, lint CI workflow and setup script for aplfme repos",
+  "license": "MIT",
+  "exports": {
+    "./biome": "./biome.json"
+  },
+  "files": ["biome.json"]
+}
