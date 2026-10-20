@@ -57,6 +57,9 @@ $COMMIT_TRAILER}"
 
 # 2. One-time autofix (safe fixes + format + import sorting)
 ./node_modules/.bin/biome check --write --max-diagnostics=0 . >/dev/null 2>&1 || true
+# A lint fix can leave code that needs another format pass
+./node_modules/.bin/biome format --write . >/dev/null 2>&1 || true
+./node_modules/.bin/biome check --write --max-diagnostics=0 . >/dev/null 2>&1 || true
 if ! git diff --quiet; then
   git add -A
   git commit -q --no-verify -m "chore: apply Biome autofix and formatting
@@ -73,7 +76,7 @@ node "$HERE/ratchet.mjs" /tmp/biome-$$.json biome.json
 rm -f /tmp/biome-$$.json
 ./node_modules/.bin/biome format --write biome.json >/dev/null 2>&1 || true
 
-./node_modules/.bin/biome ci . >/dev/null 2>&1 || { echo "biome ci still failing after ratchet:" >&2; ./node_modules/.bin/biome ci . 2>&1 | tail -40 >&2; exit 2; }
+./node_modules/.bin/biome ci . >/dev/null 2>&1 || { echo "biome ci still failing after ratchet:" >&2; ./node_modules/.bin/biome ci --colors=off --diagnostic-level=error . 2>&1 | tail -40 >&2; exit 2; }
 
 git add -A
 git commit -q --no-verify -m "chore: set existing Biome violations to warn
