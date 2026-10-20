@@ -53,7 +53,7 @@ Replaces ESLint/Prettier with the shared config from aplfme/lint-config.
 Adds a lefthook pre-commit hook and a Lint CI workflow."
 
 # 2. One-time autofix (safe fixes + format + import sorting)
-npx biome check --write --max-diagnostics=0 . >/dev/null 2>&1 || true
+./node_modules/.bin/biome check --write --max-diagnostics=0 . >/dev/null 2>&1 || true
 if ! git diff --quiet; then
   git add -A
   git commit -q --no-verify -m "chore: apply Biome autofix and formatting
@@ -63,12 +63,12 @@ Mechanical change only. Listed in .git-blame-ignore-revs."
 fi
 
 # 3. Ratchet: downgrade every rule that still errors to warn, so CI starts green
-npx biome lint --reporter=json --max-diagnostics=none . 2>/dev/null > /tmp/biome-$$.json || true
+./node_modules/.bin/biome lint --reporter=json --max-diagnostics=none . 2>/dev/null > /tmp/biome-$$.json || true
 node "$HERE/ratchet.mjs" /tmp/biome-$$.json biome.json
 rm -f /tmp/biome-$$.json
-npx biome format --write biome.json >/dev/null 2>&1 || true
+./node_modules/.bin/biome format --write biome.json >/dev/null 2>&1 || true
 
-npx biome ci . >/dev/null 2>&1 || { echo "biome ci still failing after ratchet:" >&2; npx biome ci . 2>&1 | tail -40 >&2; exit 2; }
+./node_modules/.bin/biome ci . >/dev/null 2>&1 || { echo "biome ci still failing after ratchet:" >&2; ./node_modules/.bin/biome ci . 2>&1 | tail -40 >&2; exit 2; }
 
 git add -A
 git commit -q --no-verify -m "chore: set existing Biome violations to warn

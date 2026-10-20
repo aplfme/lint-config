@@ -25,11 +25,8 @@ if (Object.keys(rules).length) {
   config.linter = { rules };
 }
 if (unparsable.size) {
-  // A repo-level files.includes replaces the shared one, so carry the shared exclusions over
-  const base = JSON.parse(readFileSync("node_modules/@aplfme/lint-config/biome.json", "utf8"));
-  config.files = {
-    includes: [...base.files.includes, ...[...unparsable].sort().map((f) => `!${f}`)],
-  };
+  // Biome merges this with the shared config's includes, so list only the extra exclusions
+  config.files = { includes: [...unparsable].sort().map((f) => `!${f}`) };
 }
 writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`);
 
